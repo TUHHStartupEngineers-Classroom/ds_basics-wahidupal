@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Wahidur Rahman Upal" />
 
 
 <title>02 Data Acqusition</title>
@@ -375,40 +376,98 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">02 Data Acqusition</h1>
-<h4 class="date">2021-04</h4>
+<h4 class="author">Wahidur Rahman Upal</h4>
+<h4 class="date">07-05-2021</h4>
 
 </div>
 
 
-<p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
-<p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
-<div id="my-first-post" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2021-05-06</p>
-<p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
-<div id="second-level-header" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Second level header</h2>
-<p>You can add more headers by adding more hashtags. These won’t be put into the table of contents</p>
-<div id="third-level-header" class="section level3" number="1.1.1">
-<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> third level header</h3>
-<p>Here’s an even lower level header</p>
+<p>Get some data via an API. There are millions of providers, that offer API access for free and have good documentation about how to query their service. You just have to google them. You can use whatever service you want. For example, you can get data about your listening history (spotify), get data about flights (skyscanner) or just check the weather forecast. Print the data in a readable format, e.g. a table if you want, you could also plot it.</p>
+<pre class="r"><code>library(httr)
+library(glue)
+library(tibble)
+library(jsonlite)
+library(tidyverse)
+library(purrr)
+library(stringr)
+library(xml2)
+wp_url &lt;- &quot;https://apify.com/covid-19&quot; # Data Scraping 
+wp &lt;- xml2::read_html(wp_url)
+data_frame &lt;- rvest::html_table(wp)[[1]] %&gt;% 
+  tibble::as_tibble(.name_repair = &quot;unique&quot;) # Columns Repairing
+data_frame %&gt;% dplyr::glimpse(45)</code></pre>
+<pre><code>## Rows: 48
+## Columns: 8
+## $ Country              &lt;chr&gt; &quot;United States~
+## $ Tested               &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;~
+## $ Infected             &lt;chr&gt; &quot;31,883,289&quot;, ~
+## $ Recovered            &lt;chr&gt; &quot;&quot;, &quot;14,556,20~
+## $ Deceased             &lt;chr&gt; &quot;569,272&quot;, &quot;19~
+## $ `Source last update` &lt;chr&gt; &quot;11 days ago&quot;,~
+## $ `Apify last update`  &lt;chr&gt; &quot;10 days ago&quot;,~
+## $ Sources              &lt;chr&gt; &quot;LatestHistory~</code></pre>
+<pre class="r"><code>data_frame</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Country"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Tested"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Infected"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Recovered"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Deceased"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Source last update"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Apify last update"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Sources"],"name":[8],"type":["chr"],"align":["left"]}],"data":[{"1":"United States","2":"","3":"31,883,289","4":"","5":"569,272","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"India","2":"","3":"17,636,307","4":"14,556,209","5":"197,894","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Brazil","2":"","3":"14,369,423","4":"","5":"391,936","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"France","2":"","3":"5,503,996","4":"","5":"","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Russia","2":"17,803,955","3":"4,718,854","4":"4,343,229","5":"106,307","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Turkey","2":"46,153,151","3":"4,667,281","4":"4,121,671","5":"38,711","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"United Kingdom","2":"","3":"4,406,946","4":"","5":"150,841","6":"11 days ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Italy","2":"","3":"3,971,114","4":"3,398,763","5":"119,539","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Spain","2":"","3":"3,488,469","4":"","5":"","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Germany","2":"","3":"3,310,301","4":"","5":"81,968","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Poland","2":"","3":"2,768,034","4":"","5":"65,897","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Iran","2":"15,313,657","3":"2,417,230","4":"1,892,229","5":"70,070","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Czech Republic","2":"17,388,713","3":"1,622,777","4":"1,541,963","5":"29,075","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Netherlands","2":"","3":"1,492,437","4":"","5":"17,295","6":"","7":"11 days ago","8":"LatestHistory"},{"1":"Canada","2":"","3":"1,187,918","4":"","5":"24,024","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Romania","2":"7,269,119","3":"1,047,520","4":"975,703","5":"27,511","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Philippines","2":"","3":"1,006,428","4":"914,952","5":"16,853","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Belgium","2":"12,312,900","3":"976,088","4":"","5":"24,065","6":"11 days ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Sweden","2":"","3":"938,343","4":"","5":"13,923","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Portugal","2":"","3":"828,173","4":"785,809","5":"16,923","6":"24 days ago","7":"23 days ago","8":"LatestHistorySource"},{"1":"Hungary","2":"5,308,624","3":"772,707","4":"491,620","5":"26,984","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Serbia","2":"3,787,020","3":"681,654","4":"","5":"6,257","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Switzerland","2":"","3":"651,822","4":"","5":"9,971","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Austria","2":"31,263,052","3":"608,553","4":"577,977","5":"10,126","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Japan","2":"","3":"575,368","4":"","5":"10,003","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Saudi Arabia","2":"","3":"413,174","4":"396,604","5":"6,913","6":"10 months ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Bulgaria","2":"","3":"399,259","4":"","5":"16,101","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Malaysia","2":"","3":"395,718","4":"369,556","5":"1,449","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Slovakia","2":"2,597,742","3":"380,498","4":"","5":"11,572","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Palestine","2":"1,722,666","3":"320,893","4":"293,069","5":"3,452","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Azerbaijan","2":"3,195,268","3":"313,812","4":"280,403","5":"4,402","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Slovenia","2":"3,209,895","3":"238,023","4":"","5":"4,526","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Lithuania","2":"","3":"235,383","4":"213,118","5":"3,785","6":"19 days ago","7":"17 days ago","8":"LatestHistorySource"},{"1":"Honduras","2":"","3":"206,381","4":"77,539","5":"5,100","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Denmark","2":"13,495,620","3":"198,472","4":"187,318","5":"2,125","6":"3 months ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Bahrain","2":"4,029,661","3":"172,576","4":"161,491","5":"625","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Nigeria","2":"","3":"164,756","4":"154,963","5":"2,062","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Algeria","2":"","3":"121,112","4":"84,440","5":"3,217","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Estonia","2":"1,264,876","3":"120,378","4":"","5":"1,145","6":"","7":"11 days ago","8":"LatestHistory"},{"1":"South Korea","2":"8,721,609","3":"119,898","4":"","5":"1,820","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Norway","2":"5,129,127","3":"110,611","4":"","5":"737","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"China","2":"160,000,000","3":"90,610","4":"85,658","5":"4,636","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Finland","2":"4,388,700","3":"85,937","4":"","5":"906","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Luxembourg","2":"2,606,391","3":"66,007","4":"","5":"790","6":"14 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Singapore","2":"","3":"61,051","4":"60,682","5":"30","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Vietnam","2":"","3":"2,852","4":"2,516","5":"35","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Pakistan","2":"","3":"","4":"","5":"","6":"20 years ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Croatia","2":"","3":"","4":"","5":"","6":"","7":"10 days ago","8":"LatestHistory"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-</div>
-</div>
-<div id="my-second-post-note-the-order" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> My second post (note the order)</h1>
-<p>Last compiled: 2021-05-06</p>
-<p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
-</div>
-<div id="adding-r-stuff" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Adding R stuff</h1>
-<p>So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place.</p>
-<p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
-<pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
-hist(samples)</code></pre>
-<p><img src="02_data_acquisition_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
+<p>Scrape one of the competitor websites of canyon (either <a href="https://www.rosebikes.de/" class="uri">https://www.rosebikes.de/</a> or <a href="https://www.radon-bikes.de" class="uri">https://www.radon-bikes.de</a>) and create a small database. The database should contain the model names and prices for at least one category. Use the selectorgadget to get a good understanding of the website structure, it is really helpful. After scraping your data, convert it to a readable format. Prices should be in a numeric format without any other letters or symbols. Also check if the prices are reasonable</p>
+<pre class="r"><code>library(tidyverse) 
+library(rvest)     
+library(xopen)     
+library(jsonlite)  
+library(glue)      
+library(stringi)   
+
+url_home          &lt;- &quot;https://www.rosebikes.de/fahrr%C3%A4der/mtb&quot;
+# Open links directly from RStudio to inspect them
+
+html_home         &lt;- read_html(url_home) # Read in the HTML for the entire web page
+
+# data scraping from the web page for  the bike models 
+bike_model &lt;- html_home %&gt;% 
+  
+  html_nodes(css = &quot;.catalog-category-bikes__title-text&quot;) %&gt;% 
+  html_text() %&gt;%
+  
+  str_remove_all(&quot;\n&quot;) 
+
+bike_model</code></pre>
+<pre><code>## [1] &quot;COUNT SOLO&quot;     &quot;PSYCHO PATH&quot;    &quot;THRILL HILL&quot;    &quot;GROUND CONTROL&quot;
+## [5] &quot;ROOT MILLER&quot;    &quot;SOUL FIRE&quot;      &quot;THE BRUCE &quot;</code></pre>
+<pre class="r"><code># data scraping from the web page for  the bike prices
+
+bike_price &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.catalog-category-bikes__price-title&quot;) %&gt;%
+  html_text() %&gt;%
+  
+  str_remove_all(&quot;\\.&quot;) %&gt;%
+  stringr::str_replace_all(pattern = &quot;\nab &quot;, replacement = &quot;&quot;) %&gt;%
+  stringr::str_replace_all(pattern = &quot;\n&quot;, replacement = &quot;&quot;) 
+
+bike_price</code></pre>
+<pre><code>## [1] &quot;769,00 \200&quot;  &quot;1999,00 \200&quot; &quot;2749,00 \200&quot; &quot;1899,00 \200&quot; &quot;2199,00 \200&quot; &quot;2349,00 \200&quot;
+## [7] &quot;979,00 \200&quot;</code></pre>
+<pre class="r"><code># merging the two tables into one
+
+da2 &lt;- tibble(bike_model, bike_price)
+
+da2 &lt;- da2 %&gt;% mutate(bike_price = as.character(gsub(&quot;€&quot;, &quot;&quot;, bike_price)))
+da2$bike_price &lt;- as.character(gsub(&quot;,&quot;,&quot;&quot;,da2$bike_price))
+da2$bike_price &lt;- as.character(gsub(&quot;ab&quot;,&quot;&quot;,da2$bike_price))
+#d&lt;-da2
+da2</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["bike_model"],"name":[1],"type":["chr"],"align":["left"]},{"label":["bike_price"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"COUNT SOLO","2":"76900"},{"1":"PSYCHO PATH","2":"199900"},{"1":"THRILL HILL","2":"274900"},{"1":"GROUND CONTROL","2":"189900"},{"1":"ROOT MILLER","2":"219900"},{"1":"SOUL FIRE","2":"234900"},{"1":"THE BRUCE","2":"97900"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
+<pre class="r"><code>#write_rds(da2, &quot;C:\\Users\\upal1\\Desktop\\DS basic project\\ds_basics-wahidupal\\Data Acquisition 2.R&quot;)
+
+#write.csv(x=da2, file=&quot;C:\\Users\\upal1\\Desktop\\DS basic project\\ds_basics-wahidupal\\data_accuisition2.csv&quot;)</code></pre>
 
 
 
