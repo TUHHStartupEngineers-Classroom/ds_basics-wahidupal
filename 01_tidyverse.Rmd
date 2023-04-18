@@ -1,7 +1,7 @@
 ---
 title: "01 Intro to the tidyverse"
-author: "Joschka Schwarz"
-date: "2021-04"
+author: "Wahidur Rahman Upal"
+date: "07-05-2021"
 output:
   html_document:
     toc: true
@@ -17,39 +17,154 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
-
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
-
-# My first post
-
-Last compiled: `r Sys.Date()`
-
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
-
-## Second level header
-
-You can add more headers by adding more hashtags. These won't be put into the table of contents
-
-### third level header
-
-Here's an even lower level header
-
-# My second post (note the order)
-
-Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
+Analyze the sales by location (state) with a bar plot. Since state and city are multiple features (variables), they should be split. Which state has the highes revenue? Replace your bike_orderlines_wrangled_tbl object with the newly wrangled object (with the columns state and city).
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
+library(tidyverse)
+library(readxl)
+library(lubridate)
+
+bikes_tbl      <- read_excel("C:\\Users\\upal1\\Desktop\\DS basic project\\ds_data\\01_bike_sales\\01_raw_data\\bikes.xlsx")
+orderlines_tbl <- read_excel("C:\\Users\\upal1\\Desktop\\DS basic project\\ds_data\\01_bike_sales\\01_raw_data\\orderlines.xlsx")
+# Not necessary for this analysis, but for the sake of completeness
+bikeshops_tbl  <- read_excel("C:\\Users\\upal1\\Desktop\\DS basic project\\ds_data\\01_bike_sales\\01_raw_data\\bikeshops.xlsx")
+# 3.0 Examining Data ----
+# Method 1: Print it to the console
+orderlines_tbl
+# Method 2: glimpse
+glimpse(orderlines_tbl)
+# 4.0 Joining Data ----
+left_join(orderlines_tbl, bikes_tbl, by = c("product.id" = "bike.id"))
+# Chaining commands with the pipe and assigning it to order_items_joined_tbl
+bike_orderlines_joined_tbl <- orderlines_tbl %>%
+  left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
+  left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
+# Examine the results with glimpse()
+bike_orderlines_joined_tbl %>% glimpse()
+# 5.0 Wrangling Data ----
+bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
+  
+  
+  separate(col    = location,
+           into   = c("city", "state"),
+           sep    = ",") %>%
+  
+  
+  mutate(total.price = price * quantity) %>%
+ 
+  select(-...1, -gender) %>%
+ 
+  select(-ends_with(".id")) %>%
+  
+ 
+  bind_cols(bike_orderlines_joined_tbl %>% select(order.id)) %>% 
+  
+  
+  select(order.id, contains("order"), contains("model"), contains("category"),
+         price, quantity, total.price,
+         everything()) %>%
+  
+
+  rename(bikeshop = name) %>%
+  set_names(names(.) %>% str_replace_all("\\.", "_"))
+# 6.1 Sales by Year ----
+
+# Step 1 - Manipulate
+sales_by_year_tbl <- bike_orderlines_wrangled_tbl %>%
+  
+  # Select columns
+  select(order_date, total_price) %>%
+  
+  # Add year column
+  mutate(year = year(order_date)) %>%
+  
+  # Grouping by year and summarizing sales
+  group_by(year) %>% 
+  summarize(sales = sum(total_price)) %>%
+  
+  
+  mutate(sales_text = scales::dollar(sales, big.mark = ".", 
+                                     decimal.mark = ",", 
+                                     prefix = "", 
+                                     suffix = " €"))
+sales_by_year_tbl
+# Step 2 - Visualization
+sales_by_year_tbl %>%
+  
+  # Setup canvas with the columns year (x-axis) and sales (y-axis)
+  ggplot(aes(x = year, y = sales)) +
+  
+  # Geometries
+  geom_col(fill = "springgreen2") + 
+  geom_label(aes(label = sales_text)) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  
+
+  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                    decimal.mark = ",", 
+                                                    prefix = "", 
+                                                    suffix = " €")) +
+  labs(
+    title    = "Revenue by year",
+    subtitle = "Upward Trend",
+    x = "", # Override defaults for x and y
+    y = "Revenue"
+  )
+
 ```
 
 When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+
+
+
+Analyze the sales by location and year (facet_wrap). Because there are 12 states with bike stores, you should get 12 plots.
+```{r}
+
+
+# 6.1 Sales by Year state ----
+# Step 1 - Manipulate
+sales_by_year_cat_1_tbl <- bike_orderlines_wrangled_tbl %>%
+  
+  # Select columns and add a year
+  select(order_date, total_price, state) %>%
+  mutate(year = year(order_date)) %>%
+  
+
+  group_by(year, state) %>%
+  summarise(sales = sum(total_price)) %>%
+  ungroup() %>%
+
+  mutate(sales_text = scales::dollar(sales, big.mark = ".", 
+                                     decimal.mark = ",", 
+                                     prefix = "", 
+                                     suffix = " €"))
+
+sales_by_year_cat_1_tbl 
+# Step 2 - Visualize
+sales_by_year_cat_1_tbl %>%
+  
+  # Set up x, y, fill
+  ggplot(aes(x = year, y = sales, fill = state)) +
+  
+# Geometries
+geom_col() + 
+geom_smooth(method = "lm", se = FALSE) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+facet_wrap(~ state) +
+scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                  decimal.mark = ",", 
+                                                  prefix = "", 
+                                                  suffix = " €")) +
+labs(
+  title = "Revenue by Year and State",
+  subtitle = "Drop in sales are fairly low",
+  fill = "State" # Changes the legend name
+) +
+  
+  theme_light() +
+  theme(title = element_text(face = "bold", color = "brown4"),
+        legend.position  = "right",
+        axis.text.x = element_text(angle = 45))
+
+
+```

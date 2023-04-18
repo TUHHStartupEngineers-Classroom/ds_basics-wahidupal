@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Wahidur Rahman Upal" />
+
+
+<title>02 Data Acqusition</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MyLabJournal</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Index</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Journal
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_tidyverse.html">01 Tidyverse</a>
+    </li>
+    <li>
+      <a href="02_data_acquisition.html">02 Data Acquisition</a>
+    </li>
+    <li>
+      <a href="03_data_wrangling.html">03 Data Wrangling</a>
+    </li>
+    <li>
+      <a href="04_data_visualization.html">04 Data Visualization</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="05_class_notes.html">Class notes</a>
+</li>
+<li>
+  <a href="06_links.html">Links</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">02 Data Acqusition</h1>
+<h4 class="author">Wahidur Rahman Upal</h4>
+<h4 class="date">07-05-2021</h4>
+
+</div>
+
+
+<p>Get some data via an API. There are millions of providers, that offer API access for free and have good documentation about how to query their service. You just have to google them. You can use whatever service you want. For example, you can get data about your listening history (spotify), get data about flights (skyscanner) or just check the weather forecast. Print the data in a readable format, e.g. a table if you want, you could also plot it.</p>
+<pre class="r"><code>library(httr)
+library(glue)
+library(tibble)
+library(jsonlite)
+library(tidyverse)
+library(purrr)
+library(stringr)
+library(xml2)
+wp_url &lt;- &quot;https://apify.com/covid-19&quot; # Data Scraping 
+wp &lt;- xml2::read_html(wp_url)
+data_frame &lt;- rvest::html_table(wp)[[1]] %&gt;% 
+  tibble::as_tibble(.name_repair = &quot;unique&quot;) # Columns Repairing
+data_frame %&gt;% dplyr::glimpse(45)</code></pre>
+<pre><code>## Rows: 48
+## Columns: 8
+## $ Country              &lt;chr&gt; &quot;United States~
+## $ Tested               &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;~
+## $ Infected             &lt;chr&gt; &quot;31,883,289&quot;, ~
+## $ Recovered            &lt;chr&gt; &quot;&quot;, &quot;14,556,20~
+## $ Deceased             &lt;chr&gt; &quot;569,272&quot;, &quot;19~
+## $ `Source last update` &lt;chr&gt; &quot;11 days ago&quot;,~
+## $ `Apify last update`  &lt;chr&gt; &quot;10 days ago&quot;,~
+## $ Sources              &lt;chr&gt; &quot;LatestHistory~</code></pre>
+<pre class="r"><code>data_frame</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Country"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Tested"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Infected"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Recovered"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Deceased"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Source last update"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Apify last update"],"name":[7],"type":["chr"],"align":["left"]},{"label":["Sources"],"name":[8],"type":["chr"],"align":["left"]}],"data":[{"1":"United States","2":"","3":"31,883,289","4":"","5":"569,272","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"India","2":"","3":"17,636,307","4":"14,556,209","5":"197,894","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Brazil","2":"","3":"14,369,423","4":"","5":"391,936","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"France","2":"","3":"5,503,996","4":"","5":"","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Russia","2":"17,803,955","3":"4,718,854","4":"4,343,229","5":"106,307","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Turkey","2":"46,153,151","3":"4,667,281","4":"4,121,671","5":"38,711","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"United Kingdom","2":"","3":"4,406,946","4":"","5":"150,841","6":"11 days ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Italy","2":"","3":"3,971,114","4":"3,398,763","5":"119,539","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Spain","2":"","3":"3,488,469","4":"","5":"","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Germany","2":"","3":"3,310,301","4":"","5":"81,968","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Poland","2":"","3":"2,768,034","4":"","5":"65,897","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Iran","2":"15,313,657","3":"2,417,230","4":"1,892,229","5":"70,070","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Czech Republic","2":"17,388,713","3":"1,622,777","4":"1,541,963","5":"29,075","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Netherlands","2":"","3":"1,492,437","4":"","5":"17,295","6":"","7":"11 days ago","8":"LatestHistory"},{"1":"Canada","2":"","3":"1,187,918","4":"","5":"24,024","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Romania","2":"7,269,119","3":"1,047,520","4":"975,703","5":"27,511","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Philippines","2":"","3":"1,006,428","4":"914,952","5":"16,853","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Belgium","2":"12,312,900","3":"976,088","4":"","5":"24,065","6":"11 days ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Sweden","2":"","3":"938,343","4":"","5":"13,923","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Portugal","2":"","3":"828,173","4":"785,809","5":"16,923","6":"24 days ago","7":"23 days ago","8":"LatestHistorySource"},{"1":"Hungary","2":"5,308,624","3":"772,707","4":"491,620","5":"26,984","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Serbia","2":"3,787,020","3":"681,654","4":"","5":"6,257","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Switzerland","2":"","3":"651,822","4":"","5":"9,971","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Austria","2":"31,263,052","3":"608,553","4":"577,977","5":"10,126","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Japan","2":"","3":"575,368","4":"","5":"10,003","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Saudi Arabia","2":"","3":"413,174","4":"396,604","5":"6,913","6":"10 months ago","7":"11 days ago","8":"LatestHistorySource"},{"1":"Bulgaria","2":"","3":"399,259","4":"","5":"16,101","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Malaysia","2":"","3":"395,718","4":"369,556","5":"1,449","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Slovakia","2":"2,597,742","3":"380,498","4":"","5":"11,572","6":"11 days ago","7":"10 days ago","8":"LatestHistory"},{"1":"Palestine","2":"1,722,666","3":"320,893","4":"293,069","5":"3,452","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Azerbaijan","2":"3,195,268","3":"313,812","4":"280,403","5":"4,402","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Slovenia","2":"3,209,895","3":"238,023","4":"","5":"4,526","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Lithuania","2":"","3":"235,383","4":"213,118","5":"3,785","6":"19 days ago","7":"17 days ago","8":"LatestHistorySource"},{"1":"Honduras","2":"","3":"206,381","4":"77,539","5":"5,100","6":"","7":"10 days ago","8":"LatestHistory"},{"1":"Denmark","2":"13,495,620","3":"198,472","4":"187,318","5":"2,125","6":"3 months ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Bahrain","2":"4,029,661","3":"172,576","4":"161,491","5":"625","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Nigeria","2":"","3":"164,756","4":"154,963","5":"2,062","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Algeria","2":"","3":"121,112","4":"84,440","5":"3,217","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Estonia","2":"1,264,876","3":"120,378","4":"","5":"1,145","6":"","7":"11 days ago","8":"LatestHistory"},{"1":"South Korea","2":"8,721,609","3":"119,898","4":"","5":"1,820","6":"10 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Norway","2":"5,129,127","3":"110,611","4":"","5":"737","6":"12 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"China","2":"160,000,000","3":"90,610","4":"85,658","5":"4,636","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Finland","2":"4,388,700","3":"85,937","4":"","5":"906","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Luxembourg","2":"2,606,391","3":"66,007","4":"","5":"790","6":"14 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Singapore","2":"","3":"61,051","4":"60,682","5":"30","6":"","7":"10 days ago","8":"LatestHistorySource"},{"1":"Vietnam","2":"","3":"2,852","4":"2,516","5":"35","6":"11 days ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Pakistan","2":"","3":"","4":"","5":"","6":"20 years ago","7":"10 days ago","8":"LatestHistorySource"},{"1":"Croatia","2":"","3":"","4":"","5":"","6":"","7":"10 days ago","8":"LatestHistory"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
+<p>Scrape one of the competitor websites of canyon (either <a href="https://www.rosebikes.de/" class="uri">https://www.rosebikes.de/</a> or <a href="https://www.radon-bikes.de" class="uri">https://www.radon-bikes.de</a>) and create a small database. The database should contain the model names and prices for at least one category. Use the selectorgadget to get a good understanding of the website structure, it is really helpful. After scraping your data, convert it to a readable format. Prices should be in a numeric format without any other letters or symbols. Also check if the prices are reasonable</p>
+<pre class="r"><code>library(tidyverse) 
+library(rvest)     
+library(xopen)     
+library(jsonlite)  
+library(glue)      
+library(stringi)   
+
+url_home          &lt;- &quot;https://www.rosebikes.de/fahrr%C3%A4der/mtb&quot;
+# Open links directly from RStudio to inspect them
+
+html_home         &lt;- read_html(url_home) # Read in the HTML for the entire web page
+
+# data scraping from the web page for  the bike models 
+bike_model &lt;- html_home %&gt;% 
+  
+  html_nodes(css = &quot;.catalog-category-bikes__title-text&quot;) %&gt;% 
+  html_text() %&gt;%
+  
+  str_remove_all(&quot;\n&quot;) 
+
+bike_model</code></pre>
+<pre><code>## [1] &quot;COUNT SOLO&quot;     &quot;PSYCHO PATH&quot;    &quot;THRILL HILL&quot;    &quot;GROUND CONTROL&quot;
+## [5] &quot;ROOT MILLER&quot;    &quot;SOUL FIRE&quot;      &quot;THE BRUCE &quot;</code></pre>
+<pre class="r"><code># data scraping from the web page for  the bike prices
+
+bike_price &lt;- html_home %&gt;%
+  
+  html_nodes(css = &quot;.catalog-category-bikes__price-title&quot;) %&gt;%
+  html_text() %&gt;%
+  
+  str_remove_all(&quot;\\.&quot;) %&gt;%
+  stringr::str_replace_all(pattern = &quot;\nab &quot;, replacement = &quot;&quot;) %&gt;%
+  stringr::str_replace_all(pattern = &quot;\n&quot;, replacement = &quot;&quot;) 
+
+bike_price</code></pre>
+<pre><code>## [1] &quot;769,00 \200&quot;  &quot;1999,00 \200&quot; &quot;2749,00 \200&quot; &quot;1899,00 \200&quot; &quot;2199,00 \200&quot; &quot;2349,00 \200&quot;
+## [7] &quot;979,00 \200&quot;</code></pre>
+<pre class="r"><code># merging the two tables into one
+
+da2 &lt;- tibble(bike_model, bike_price)
+
+da2 &lt;- da2 %&gt;% mutate(bike_price = as.character(gsub(&quot;€&quot;, &quot;&quot;, bike_price)))
+da2$bike_price &lt;- as.character(gsub(&quot;,&quot;,&quot;&quot;,da2$bike_price))
+da2$bike_price &lt;- as.character(gsub(&quot;ab&quot;,&quot;&quot;,da2$bike_price))
+#d&lt;-da2
+da2</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["bike_model"],"name":[1],"type":["chr"],"align":["left"]},{"label":["bike_price"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"COUNT SOLO","2":"76900"},{"1":"PSYCHO PATH","2":"199900"},{"1":"THRILL HILL","2":"274900"},{"1":"GROUND CONTROL","2":"189900"},{"1":"ROOT MILLER","2":"219900"},{"1":"SOUL FIRE","2":"234900"},{"1":"THE BRUCE","2":"97900"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>#write_rds(da2, &quot;C:\\Users\\upal1\\Desktop\\DS basic project\\ds_basics-wahidupal\\Data Acquisition 2.R&quot;)
+
+#write.csv(x=da2, file=&quot;C:\\Users\\upal1\\Desktop\\DS basic project\\ds_basics-wahidupal\\data_accuisition2.csv&quot;)</code></pre>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
